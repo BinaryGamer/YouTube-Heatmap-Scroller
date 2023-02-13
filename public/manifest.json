@@ -1,0 +1,14 @@
+{
+    "name": "YouTube Heatmap Navigator",
+    "description": "This extension navigates YouTube videos by their 'most replayed' data.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": [
+       "activeTab",
+       "scripting"
+    ],
+    "action": {},
+    "background": {
+       "service_worker": "navigator.js"
+    }
+ }

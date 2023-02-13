@@ -1,0 +1,30 @@
+{
+  "name": "youtube-heatmap-scroller",
+  "version": "1.0.0",
+  "description": "Chrome extension to help navigate videos by their most replayed section",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack/webpack.config.js",
+    "start": "ts-node src/navigator.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BinaryGamer/YouTube-Heatmap-Scroller.git"
+  },
+  "author": "Liam Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BinaryGamer/YouTube-Heatmap-Scroller/issues"
+  },
+  "homepage": "https://github.com/BinaryGamer/YouTube-Heatmap-Scroller#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.0.212",
+    "copy-webpack-plugin": "^11.0.0",
+    "ts-loader": "^9.4.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
