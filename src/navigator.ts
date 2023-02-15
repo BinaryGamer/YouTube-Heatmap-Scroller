@@ -18,6 +18,9 @@ function getHeatmapData(): string | null {
     if (elements.length == 0) {
         return null;
     }
+    if (elements.length !== 1) {
+        console.log("Haven't implemented Chapters yet.");
+    }
     let output = elements[0].getAttribute('d');
     if (typeof(output) === "object") {
         return output;
@@ -65,6 +68,28 @@ function parseHeatmapData(data: string): Array<HeatmapEntry> {
 };
 
 /**
+ * a function that returns the length of the video in seconds
+ * @returns length of video in seconds
+ */
+function getVideoLength(): number {
+    const multipliers: number[] = [1, 60, 3600, 86400];
+    let rawTime = document.getElementsByClassName("ytp-time-duration")[0].textContent;
+    if (typeof rawTime === "object") {
+        return 0;
+    }
+    let time = rawTime.split(":");
+    let output = 0;
+    for (let i = 1; i <= time.length; i++) {
+        var nextVal = time.at(-i);
+        if (typeof nextVal === 'undefined') {
+            return 0;
+        }
+        output += +nextVal*multipliers[i-1];
+    }
+    return output;
+}
+
+/**
  * A function to print out the local maxes and the video max of the data.
  * @param entries An array of HeatmapEntries
  * @returns a boolean, true if data was printed, false otherwise.
@@ -74,7 +99,7 @@ function printMaxes(entries: Array<HeatmapEntry>): boolean {
         return false
     }
     var maxEntry: HeatmapEntry = entries[0];
-    var timeLength = 1542;
+    var timeLength = getVideoLength();
     for (let i = 1; i < (entries.length - 1); i++) {
         let curr = entries[i];
         let prev = entries[i-1];
@@ -105,18 +130,31 @@ function printMaxes(entries: Array<HeatmapEntry>): boolean {
 /**
  * A function to handle gathering, parsing and printing the data.
  */
-function foo(): void {
-    let rawData = getHeatmapData();
-    if (typeof(rawData) === 'string') {
-        let data = parseHeatmapData(rawData);
-        printMaxes(data);
+function addElements(): void {
+    console.log("nocie");
+    const copying = document.getElementsByClassName("ytp-play-button")[0].cloneNode(true);
+    const newSkip = document.createElement("button");
+    newSkip.classList.add("ytp-button");
+    newSkip.title = "Tee Hee";
+    newSkip.role = "button";
+    const children = copying.childNodes;
+    for (let i = 0; i < children.length; i++) {
+        newSkip.appendChild(children[i]);
     }
+    const controls = document.getElementsByClassName("ytp-left-controls")[0];
+    newSkip.onclick = function () {
+        let rawData = getHeatmapData();
+        if (typeof(rawData) === 'string') {
+            let data = parseHeatmapData(rawData);
+            printMaxes(data);
+        }
+    }
+    controls.appendChild(newSkip);
 }
 
 chrome.action.onClicked.addListener((tab) => {
     chrome.scripting.executeScript({
         target: {tabId: tab.id ? tab.id : -1},
-        func: foo
+        func: addElements
     }).then();
 })
-
