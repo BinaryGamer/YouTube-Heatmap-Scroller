@@ -8,6 +8,11 @@ interface HeatmapEntry {
     height: number;
 }
 
+interface VideoPlayer extends Element {
+    currentTime: number;
+    duration: number;
+}
+
 /**
  * A function to grab the heat map data from a webpage and export it as a string.
  * Returns null if no heatmap data exists.
@@ -72,21 +77,33 @@ function parseHeatmapData(data: string): Array<HeatmapEntry> {
  * @returns length of video in seconds
  */
 function getVideoLength(): number {
-    const multipliers: number[] = [1, 60, 3600, 86400];
-    let rawTime = document.getElementsByClassName("ytp-time-duration")[0].textContent;
-    if (typeof rawTime === "object") {
+    const player = document.getElementsByClassName('video-stream')[0];
+    if ('duration' in player === false) {
         return 0;
     }
-    let time = rawTime.split(":");
-    let output = 0;
-    for (let i = 1; i <= time.length; i++) {
-        var nextVal = time.at(-i);
-        if (typeof nextVal === 'undefined') {
-            return 0;
-        }
-        output += +nextVal*multipliers[i-1];
+    const vidPlayer: VideoPlayer = (player as VideoPlayer);
+    return vidPlayer.duration;
+}
+
+function getCurrentTime(): number | null {
+    const player = document.getElementsByClassName('video-stream')[0];
+    if ('play' in player === false) {
+        return null;
     }
-    return output;
+    const vidPlayer: VideoPlayer = (player as VideoPlayer);
+    return vidPlayer.currentTime;
+}
+
+function positionToSeconds(position: number) {
+    const player = document.getElementsByClassName('video-stream')[0];
+    if ('duration' in player === false) {
+        return 0;
+    }
+    const vidPlayer: VideoPlayer = (player as VideoPlayer);
+    let length =  vidPlayer.duration;
+    let percent = position / 1000;
+    let occurTime = percent*length;
+    return occurTime;
 }
 
 /**
@@ -127,10 +144,27 @@ function printMaxes(entries: Array<HeatmapEntry>): boolean {
     return true;
 }
 
+function seekVideo(time: number): void {
+    const player = document.getElementsByClassName('video-stream')[0];
+    if ('currentTime' in player === false) {
+        return;
+    }
+    const vidPlayer: VideoPlayer = (player as VideoPlayer);
+    vidPlayer.currentTime = time;
+}
+
+
+
 /**
  * A function to handle gathering, parsing and printing the data.
  */
 function addElements(): void {
+    let rawData = getHeatmapData();
+    if (typeof rawData === "object") {
+        return;
+    }
+    let data = parseHeatmapData(rawData);
+    //printMaxes(data);
     console.log("nocie");
     const copying = document.getElementsByClassName("ytp-play-button")[0].cloneNode(true);
     const newSkip = document.createElement("button");
@@ -143,10 +177,35 @@ function addElements(): void {
     }
     const controls = document.getElementsByClassName("ytp-left-controls")[0];
     newSkip.onclick = function () {
-        let rawData = getHeatmapData();
-        if (typeof(rawData) === 'string') {
-            let data = parseHeatmapData(rawData);
-            printMaxes(data);
+        console.log("clicked");
+        let currentTime = getCurrentTime();
+        //console.log(rawData);
+        console.log(currentTime);
+        if (typeof(rawData) === 'string' && typeof(currentTime) === "number") {
+            console.log("1");
+            
+            for (let i = 1; i < (data.length - 1); i++) {
+                let curr = data[i];
+                let prev = data[i-1];
+                let next = data[i+1];
+                if (curr.height > prev.height && curr.height > next.height) {
+                    console.log("2");
+                    
+                    const player = document.getElementsByClassName('video-stream')[0];
+                    if ('duration' in player === false) {
+                        return 0;
+                    }
+                    const vidPlayer: VideoPlayer = (player as VideoPlayer);
+                    let length =  vidPlayer.duration;
+                    let percent = curr.position / 1000;
+                    let posTime = percent*length;
+                    if (posTime > currentTime) {
+                        console.log("3");
+                        vidPlayer.currentTime = posTime;
+                        break;
+                    }
+                }
+            }
         }
     }
     controls.appendChild(newSkip);
