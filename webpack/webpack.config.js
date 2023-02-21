@@ -1,6 +1,7 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
+   devtool: 'source-map',
    mode: "production",
    entry: {
       navigator: path.resolve(__dirname, "..", "src", "navigator.ts"),
