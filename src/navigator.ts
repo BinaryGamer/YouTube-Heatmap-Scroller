@@ -1,6 +1,10 @@
 /**
  * @author Liam Smith
  * @version 0.0.1
+ * 
+ * Unfortunately the source code is quite messy, 
+ * as ts-loader was not properly compiling the 
+ * TypeScript into JavaScript.
  */
 
 interface HeatmapEntry {
@@ -12,60 +16,6 @@ interface VideoPlayer extends Element {
     currentTime: number;
     duration: number;
 }
-
-
-/*
-/**
- * A function to print out the local maxes and the video max of the data.
- * @param entries An array of HeatmapEntries
- * @returns a boolean, true if data was printed, false otherwise.
- *
-function printMaxes(entries: Array<HeatmapEntry>): boolean {
-    if (entries.length === 0) {
-        return false
-    }
-    var maxEntry: HeatmapEntry = entries[0];
-    var timeLength = getVideoLength();
-    for (let i = 1; i < (entries.length - 1); i++) {
-        let curr = entries[i];
-        let prev = entries[i-1];
-        let next = entries[i+1];
-        if (curr.height > prev.height && curr.height > next.height) {
-            let percent = curr.position / 1000;
-            let occurTime = percent*timeLength;
-            let mins = Math.floor(occurTime/60);
-            let seconds = Math.floor(occurTime - (60*mins))
-            console.log("local max at", mins, ":", seconds);
-            //console.log(prev, curr, next);
-            if (curr.height > maxEntry.height) {
-                maxEntry = curr 
-            }
-        }
-    }
-    
-    let percent = maxEntry.position/1000;
-    let occurTime = percent*timeLength;
-    let mins = Math.floor(occurTime/60);
-    let seconds = Math.floor(occurTime - (60*mins))
-    console.log("video max at", mins, ":", seconds);
-    //console.log(maxEntry);
-
-    return true;
-}
-
-function seekVideo(time: number): void {
-    const player = document.getElementsByClassName('video-stream')[0];
-    if ('currentTime' in player === false) {
-        return;
-    }
-    const vidPlayer: VideoPlayer = (player as VideoPlayer);
-    vidPlayer.currentTime = time;
-}
-*/
-
-/*
-<svg width="100%" viewBox="0 0 36 36" version="1.1" height="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-42"></use><path class="ytp-svg-fill" d="M 17,10 19,10 26,17 26,18 19,25 17,25 17,24 22,19 11,19 10,18 10,17 11,16 22,16 17,11 z" id="ytp-id-696969"></path></svg>*/
-
 
 /**
  * A function to handle gathering, parsing and printing the data.
